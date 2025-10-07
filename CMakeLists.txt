@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(strips C)
+project(elfpatch C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -13,7 +13,7 @@ target_compile_options(project_compiler_options INTERFACE
 
 include_directories(src libs)
 
-add_subdirectory(libs/strips)
+add_subdirectory(libs/elfin)
 
 set(MAIN_SOURCES 
     src/main.c)

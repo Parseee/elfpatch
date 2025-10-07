@@ -6,14 +6,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define STRIPS_ERROR_HANDLE(call_func, ...)                                    \
+#define ELFIN_ERROR_HANDLE(call_func, ...)                                     \
     do {                                                                       \
-        STRIPS_ERROR error_handler = call_func;                                \
+        ELFIN_ERROR error_handler = call_func;                                 \
         if (error_handler) {                                                   \
             fprintf(stderr,                                                    \
                     "Error calling " #call_func " on line %d,"                 \
                     " file %s. error is %s\n",                                 \
-                    __LINE__, __FILE__, strips_strerror(error_handler));       \
+                    __LINE__, __FILE__, elfin_strerror(error_handler));        \
             __VA_ARGS__;                                                       \
             return error_handler;                                              \
         }                                                                      \
@@ -23,26 +23,31 @@
     do {                                                                       \
         fprintf(stderr, msg);                                                  \
         __VA_ARGS__;                                                           \
-        return STRIPS_FAILURE;                                                 \
+        return ELFIN_FAILURE;                                                  \
     } while (0)
 
 typedef enum {
-    STRIPS_OK,
-    STRIPS_FAILURE,
-    STRIPS_EHDR_FAILURE,
-    STRIPS_SHDR_FAILURE,
-    STRIPS_PHNUM_FAILURE,
-    STRIPS_PHDR_FAILURE
-} STRIPS_ERROR;
+    ELFIN_OK,
+    ELFIN_FAILURE,
+    ELFIN_EHDR_FAILURE,
+    ELFIN_SHDR_FAILURE,
+    ELFIN_PHNUM_FAILURE,
+    ELFIN_PHDR_FAILURE,
+    ELFIN_SCN_FAILURE
+} ELFIN_ERROR;
 
 typedef struct {
-    bool symtab;
-    bool debug;
-} strip_policy_t;
+    bool set_rpath;
+    bool set_interp;
+    bool print_rpath;
+    bool print_interp;
+    char *rpath;
+    char *interpreter;
+} elfin_policy_t;
 
-bool strips_check_magic(Elf32_Ehdr *hdr);
+bool elfin_check_magic(Elf32_Ehdr *hdr);
 
-STRIPS_ERROR strips_process_file(const char *filename,
-                                 const strip_policy_t policy);
+ELFIN_ERROR elfin_process_file(const char *filename,
+                               const elfin_policy_t policy, char output[]);
 
-const char *strips_strerror(const STRIPS_ERROR error);
+const char *elfin_strerror(const ELFIN_ERROR error);

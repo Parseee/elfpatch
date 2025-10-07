@@ -19,9 +19,9 @@ endif()
 
 # Source files
 set(SOURCES
-    src/strips.c
-    src/strips.h
-    lib_strips.h
+    src/elfin.c
+    src/elfin.h
+    lib_elfin.h
     )
 
 # Create library
