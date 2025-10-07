@@ -1,0 +1,6 @@
+/.cache
+/build
+/graphs
+.vscode
+*a.out
+program
