@@ -25,7 +25,7 @@ set(SOURCES
     )
 
 # Create library
-add_library(${PROJECT_NAME} ${SOURCES})
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 target_include_directories(${PROJECT_NAME} 
             PRIVATE ${ELFUTILS_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME}

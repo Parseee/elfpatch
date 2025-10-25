@@ -1,9 +1,9 @@
 #include <getopt.h>
+#include <memory.h>
 #include <stdbool.h>
 #include <stdio.h>
 
 #include "elfin/lib_elfin.h"
-// #include "elfin/src/elfin.h"
 
 void print_usage(void) {
     fprintf(stderr, "usage: elfpatch "
@@ -14,29 +14,36 @@ void print_usage(void) {
 }
 
 elfin_policy_t manage_options(int argc, char **argv, char **filename) {
-    elfin_policy_t policy = {.set_rpath = false,
-                             .set_interp = false,
-                             .print_rpath = false,
-                             .print_interp = false,
-                             .rpath = NULL,
-                             .interpreter = NULL};
+    elfin_policy_t policy = {
+        .set_rpath = false,
+        .set_interp = false,
+        .print_rpath = false,
+        .print_interp = false,
+        .rpath = NULL,
+        .interpreter = NULL,
+    };
 
     static struct option long_options[] = {
-        {"set-rpath", required_argument, 0, 'r'},
-        {"set-interpreter", required_argument, 0, 'i'},
+        {"set-rpath", no_argument, 0, 'r'},
+        {"set-interpreter", no_argument, 0, 'i'},
         {"print-rpath", no_argument, 0, 'p'},
         {"print-interpreter", no_argument, 0, 't'},
         {0, 0, 0, 0}};
-
-    int opt;
-    int option_index = 0;
 
     if (argc < 2) {
         print_usage();
         exit(EXIT_FAILURE);
     }
 
-    opt = getopt_long(argc, argv, "r:i:pt", long_options, &option_index);
+    int opt;
+    int option_index = 0;
+
+    opt = getopt_long(argc, argv, "ript", long_options, &option_index);
+    if (opt == -1) {
+        print_usage();
+        exit(EXIT_FAILURE);
+    }
+
     switch (opt) {
     case 'r': // --set-rpath
         if (optind + 1 >= argc) {
@@ -94,13 +101,11 @@ int main(int argc, char **argv) {
     char *filename = NULL;
     elfin_policy_t policy = manage_options(argc, argv, &filename);
 
-    if (filename == NULL) {
-        print_usage();
-        exit(EXIT_FAILURE);
-    }
-
     char output[4096];
+    memset(output, 0, 4096);
     ELFIN_ERROR_HANDLE(elfin_process_file(filename, policy, output));
 
-    printf("rpath: %s", output);
+    if (policy.print_interp || policy.print_rpath) {
+        printf("%s\n", output);
+    }
 }

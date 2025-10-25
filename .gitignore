@@ -3,4 +3,5 @@
 /graphs
 .vscode
 *a.out
-program
+prog
+venv
